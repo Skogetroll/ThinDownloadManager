@@ -1,18 +1,18 @@
-package com.thin.downloadmanager;
+package com.thin.downloadmanager
 
 /**
  * A Listener for the Download Status. Implement this interface to listen to Download Events.
  *
  * @author Hari Gangadharan
  */
-public interface DownloadStatusListenerV1 {
+interface DownloadStatusListenerV1 {
 
     /**
      * This method is invoked when download is complete.
      *
      * @param downloadRequest   the download request provided by the client
      */
-    void onDownloadComplete(DownloadRequest downloadRequest);
+    fun onDownloadComplete(downloadRequest: DownloadRequest)
 
 
     /**
@@ -22,7 +22,7 @@ public interface DownloadStatusListenerV1 {
      * @param errorCode         the download error code
      * @param errorMessage      the error message
      */
-    void onDownloadFailed(DownloadRequest downloadRequest, int errorCode, String errorMessage);
+    fun onDownloadFailed(downloadRequest: DownloadRequest, errorCode: Int, errorMessage: String)
 
     /**
      * This method is invoked on a progress update.
@@ -32,5 +32,5 @@ public interface DownloadStatusListenerV1 {
      * @param downloadedBytes   bytes downloaded till now
      * @param progress          the progress of download
      */
-	void onProgress(DownloadRequest downloadRequest, long totalBytes, long downloadedBytes, int progress);
+    fun onProgress(downloadRequest: DownloadRequest, totalBytes: Long, downloadedBytes: Long, progress: Int)
 }

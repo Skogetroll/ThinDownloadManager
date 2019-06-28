@@ -1,27 +1,28 @@
-package com.thin.downloadmanager;
+package com.thin.downloadmanager
 
 /**
  * Created by maniselvaraj on 15/4/15.
  */
-public interface RetryPolicy {
+interface RetryPolicy {
 
     /**
      * Returns the current timeout (used for logging).
      */
-    public int getCurrentTimeout();
+    val currentTimeout: Int
 
     /**
      * Returns the current retry count (used for logging).
      */
-    public int getCurrentRetryCount();
+    val currentRetryCount: Int
 
     /**
      * Return back off multiplier
      */
-    public float getBackOffMultiplier();
+    val backOffMultiplier: Float
 
 
-    public void retry() throws RetryError;
+    @Throws(RetryError::class)
+    fun retry()
 
 
 }
