@@ -76,10 +76,11 @@ internal class DownloadDispatcher
         while (true) {
             var request: DownloadRequest? = null
             try {
-                request = mQueue.take()
+                val downloadRequest = mQueue.take()
+                request = downloadRequest
                 mRedirectionCount = 0
                 shouldAllowRedirects = true
-                Log.v("Download initiated for " + request!!.downloadId)
+                Log.v("Download initiated for " + request.downloadId)
                 updateDownloadState(request, DownloadManager.Status.STARTED)
                 executeDownload(request, request.getUri().toString())
             } catch (e: InterruptedException) {
@@ -92,7 +93,7 @@ internal class DownloadDispatcher
                             updateDownloadFailed(request, DownloadManager.Error.DOWNLOAD_CANCELLED, "Download cancelled")
                         }
                     }
-                    mTimer!!.cancel()
+                    mTimer?.cancel()
                     return
                 }
             }
@@ -119,7 +120,8 @@ internal class DownloadDispatcher
 
         try {
             conn = url.openConnection() as HttpURLConnection
-            val destinationFile = File(request.getDestinationURI()!!.path!!)
+            val path = request.getDestinationURI()!!.path!!
+            val destinationFile = File(path)
             if (destinationFile.exists()) {
                 mDownloadedCacheSize = destinationFile.length().toInt().toLong()
             }
@@ -209,7 +211,8 @@ internal class DownloadDispatcher
                 e.printStackTrace()
             }
 
-            val destinationFile = File(request.getDestinationURI()!!.path!!)
+            val path = request.getDestinationURI()!!.path!!
+            val destinationFile = File(path)
 
             var errorCreatingDestinationFile = false
             // Create destination file if it doesn't exists
@@ -383,7 +386,7 @@ internal class DownloadDispatcher
         val retryPolicy = request.retryPolicy
         try {
             retryPolicy.retry()
-            mTimer!!.schedule(object : TimerTask() {
+            mTimer?.schedule(object : TimerTask() {
                 override fun run() {
                     executeDownload(request, request.getUri().toString())
                 }

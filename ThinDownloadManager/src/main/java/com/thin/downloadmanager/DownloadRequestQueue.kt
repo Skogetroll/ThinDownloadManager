@@ -17,7 +17,7 @@ class DownloadRequestQueue {
     /**
      * The set of all requests currently being processed by this RequestQueue. A Request will be in this set if it is waiting in any queue or currently being processed by any dispatcher.
      */
-    private var mCurrentRequests: MutableSet<DownloadRequest>? = HashSet()
+    private var mCurrentRequests: MutableMap<Int, DownloadRequest>? = HashMap()
 
     /** The queue of requests that are actually going out to the network.  */
     private var mDownloadQueue: PriorityBlockingQueue<DownloadRequest>? = PriorityBlockingQueue()
@@ -110,9 +110,9 @@ class DownloadRequestQueue {
 
         // Create download dispatchers (and corresponding threads) up to the pool size.
         val downloadDispatchers = mDownloadDispatchers
-        if (downloadDispatchers != null) {
-            val queue = mDownloadQueue!!
-            val delivery = mDelivery!!
+        val queue = mDownloadQueue
+        val delivery = mDelivery
+        if (downloadDispatchers != null && queue != null && delivery != null) {
             for (i in downloadDispatchers.indices) {
                 val downloadDispatcher = DownloadDispatcher(queue, delivery)
                 downloadDispatchers[i] = downloadDispatcher
@@ -133,13 +133,16 @@ class DownloadRequestQueue {
         // Tag the request as belonging to this queue and add it to the set of current requests.
         request.setDownloadRequestQueue(this)
 
-        synchronized(mCurrentRequests!!) {
-            mCurrentRequests!!.add(request)
+        val currentRequests = mCurrentRequests
+        if (currentRequests != null) {
+            synchronized(currentRequests) {
+                mCurrentRequests?.set(request.downloadId, request)
+            }
         }
 
         // Process requests in the order they are added.
         request.downloadId = downloadId
-        mDownloadQueue!!.add(request)
+        mDownloadQueue?.add(request)
 
         return downloadId
     }
@@ -151,28 +154,24 @@ class DownloadRequestQueue {
      * @return
      */
     internal fun query(downloadId: Int): DownloadManager.Status {
-        synchronized(mCurrentRequests!!) {
-            for (request in mCurrentRequests!!) {
-                if (request.downloadId == downloadId) {
-                    return request.downloadState
-                }
-            }
+        val currentRequests = mCurrentRequests ?: return DownloadManager.Status.NOT_FOUND
+        synchronized(currentRequests) {
+            return  currentRequests[downloadId]?.downloadState ?: DownloadManager.Status.NOT_FOUND
         }
-        return DownloadManager.Status.NOT_FOUND
     }
 
     /**
      * Cancel all the dispatchers in work and also stops the dispatchers.
      */
     internal fun cancelAll() {
-
-        synchronized(mCurrentRequests!!) {
-            for (request in mCurrentRequests!!) {
+        val currentRequests = mCurrentRequests ?: return
+        synchronized(currentRequests) {
+            for (request in currentRequests.values) {
                 request.cancel()
             }
 
             // Remove all the requests from the queue.
-            mCurrentRequests!!.clear()
+            mCurrentRequests?.clear()
         }
     }
 
@@ -183,16 +182,16 @@ class DownloadRequestQueue {
      * @return int
      */
     internal fun cancel(downloadId: Int): Int {
-        synchronized(mCurrentRequests!!) {
-            for (request in mCurrentRequests!!) {
-                if (request.downloadId == downloadId) {
-                    request.cancel()
-                    return 1
-                }
+        val currentRequests = mCurrentRequests ?: return 0
+        synchronized(currentRequests) {
+            val request = currentRequests[downloadId]
+            return if (request != null) {
+                request.cancel()
+                1
+            } else {
+                0
             }
         }
-
-        return 0
     }
 
     /**
@@ -220,8 +219,9 @@ class DownloadRequestQueue {
      * hasn't enable isResumable feature.
      */
     private fun checkResumableDownloadEnabled(downloadId: Int) {
-        synchronized(mCurrentRequests!!) {
-            for (request in mCurrentRequests!!) {
+        val currentRequests = mCurrentRequests!!
+        synchronized(currentRequests) {
+            for (request in currentRequests.values) {
                 if (downloadId == -1 && !request.isResumable) {
                     Log.e("ThinDownloadManager",
                             String.format(Locale.getDefault(), "This request has not enabled resume feature hence request will be cancelled. Request Id: %d", request.downloadId))
@@ -235,10 +235,11 @@ class DownloadRequestQueue {
     }
 
     internal fun finish(request: DownloadRequest) {
-        if (mCurrentRequests != null) {//if finish and release are called together it throws NPE
+        val currentRequests = mCurrentRequests
+        if (currentRequests != null) {//if finish and release are called together it throws NPE
             // Remove from the queue.
-            synchronized(mCurrentRequests!!) {
-                mCurrentRequests!!.remove(request)
+            synchronized(currentRequests) {
+                mCurrentRequests?.remove(request.downloadId)
             }
         }
     }
@@ -247,9 +248,10 @@ class DownloadRequestQueue {
      * Cancels all the pending & running requests and releases all the dispatchers.
      */
     internal fun release() {
-        if (mCurrentRequests != null) {
-            synchronized(mCurrentRequests!!) {
-                mCurrentRequests!!.clear()
+        val currentRequests = mCurrentRequests
+        if (currentRequests != null) {
+            synchronized(currentRequests) {
+                currentRequests.clear()
                 mCurrentRequests = null
             }
         }

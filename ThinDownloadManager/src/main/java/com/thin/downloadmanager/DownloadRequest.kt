@@ -95,13 +95,11 @@ class DownloadRequest(
     }
 
     init {
-        if (mUri == null) {
-            throw NullPointerException()
-        }
+        val uri = mUri ?: throw NullPointerException()
 
-        val scheme = mUri!!.scheme
+        val scheme = uri.scheme
         if (scheme == null || scheme != "http" && scheme != "https") {
-            throw IllegalArgumentException("Can only download HTTP/HTTPS URIs: " + mUri!!)
+            throw IllegalArgumentException("Can only download HTTP/HTTPS URIs: " + uri)
         }
         customHeaders = HashMap()
         downloadState = DownloadManager.Status.PENDING

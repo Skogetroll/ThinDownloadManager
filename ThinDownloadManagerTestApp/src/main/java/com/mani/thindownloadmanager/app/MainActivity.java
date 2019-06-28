@@ -9,12 +9,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.thin.downloadmanager.DefaultRetryPolicy;
 import com.thin.downloadmanager.DownloadManager;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.thin.downloadmanager.RetryPolicy;
 import com.thin.downloadmanager.ThinDownloadManager;
+
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String FILE6 = "https://dl.dropboxusercontent.com/u/25887355/ThinDownloadManager.tar.gz";
 
     MyDownloadDownloadStatusListenerV1
-        myDownloadStatusListener = new MyDownloadDownloadStatusListenerV1();
+            myDownloadStatusListener = new MyDownloadDownloadStatusListenerV1();
 
     int downloadId1;
     int downloadId2;
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         File filesDir = getExternalFilesDir("");
 
         Uri downloadUri = Uri.parse(FILE1);
-        Uri destinationUri = Uri.parse(filesDir+"/test_photo1.JPG");
+        Uri destinationUri = Uri.parse(filesDir + "/test_photo1.JPG");
         final DownloadRequest downloadRequest1 = new DownloadRequest(downloadUri)
                 .setDestinationURI(destinationUri).setPriority(DownloadRequest.Priority.LOW)
                 .setRetryPolicy(retryPolicy)
@@ -117,21 +119,21 @@ public class MainActivity extends AppCompatActivity {
                 .setStatusListener(myDownloadStatusListener);
 
         downloadUri = Uri.parse(FILE2);
-        destinationUri = Uri.parse(filesDir+"/test_photo2.jpg");
+        destinationUri = Uri.parse(filesDir + "/test_photo2.jpg");
         final DownloadRequest downloadRequest2 = new DownloadRequest(downloadUri)
                 .setDestinationURI(destinationUri).setPriority(DownloadRequest.Priority.LOW)
                 .setDownloadContext("Download2")
                 .setStatusListener(myDownloadStatusListener);
 
         downloadUri = Uri.parse(FILE3);
-        destinationUri = Uri.parse(filesDir+"/test_song.mp3");
+        destinationUri = Uri.parse(filesDir + "/test_song.mp3");
         final DownloadRequest downloadRequest3 = new DownloadRequest(downloadUri)
                 .setDestinationURI(destinationUri).setPriority(DownloadRequest.Priority.HIGH)
                 .setDownloadContext("Download3")
                 .setStatusListener(myDownloadStatusListener);
 
         downloadUri = Uri.parse(FILE4);
-        destinationUri = Uri.parse(filesDir+"/mani/test/aaa/test_video.mp4");
+        destinationUri = Uri.parse(filesDir + "/mani/test/aaa/test_video.mp4");
         // Define a custom retry policy
         retryPolicy = new DefaultRetryPolicy(5000, 3, 2f);
         final DownloadRequest downloadRequest4 = new DownloadRequest(downloadUri)
@@ -141,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 .setStatusListener(myDownloadStatusListener);
 
         downloadUri = Uri.parse(FILE5);
-        destinationUri = Uri.parse(filesDir+"/headers.json");
+        destinationUri = Uri.parse(filesDir + "/headers.json");
         final DownloadRequest downloadRequest5 = new DownloadRequest(downloadUri)
                 .addCustomHeader("Auth-Token", "myTokenKey")
                 .addCustomHeader("User-Agent", "Thin/Android")
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 .setStatusListener(myDownloadStatusListener);
 
         downloadUri = Uri.parse(FILE6);
-        destinationUri = Uri.parse(filesDir+"/wtfappengine.zip");
+        destinationUri = Uri.parse(filesDir + "/wtfappengine.zip");
         final DownloadRequest downloadRequest6 = new DownloadRequest(downloadUri)
                 .setDestinationURI(destinationUri).setPriority(DownloadRequest.Priority.HIGH)
                 .setDownloadContext("Download6")
@@ -193,17 +195,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mDownload5.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 //if (downloadManager.query(downloadId5) == DownloadManager.STATUS_NOT_FOUND) {
                 //    downloadId5 = downloadManager.add(downloadRequest5);
                 //}
 
-              if (downloadManager.query(downloadId6) == DownloadManager.Status.NOT_FOUND) {
-                  downloadId6 = downloadManager.add(downloadRequest6);
-              }
+                if (downloadManager.query(downloadId6) == DownloadManager.Status.NOT_FOUND) {
+                    downloadId6 = downloadManager.add(downloadRequest6);
+                }
 
-          }
+            }
         });
 
         mStartAll.setOnClickListener(new View.OnClickListener() {
@@ -226,7 +228,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mListFiles.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 showInternalFilesDir();
             }
         });
@@ -249,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
         File internalFile = new File(getExternalFilesDir("").getPath());
         File files[] = internalFile.listFiles();
         StringBuilder contentText = new StringBuilder();
-        if( files.length == 0 ) {
+        if (files.length == 0) {
             contentText = new StringBuilder("No Files Found");
         }
 
@@ -275,18 +278,18 @@ public class MainActivity extends AppCompatActivity {
         public void onDownloadComplete(DownloadRequest request) {
             final int id = request.getDownloadId();
             if (id == downloadId1) {
-                mProgress1Txt.setText(request.getDownloadContext() + " id: "+id+" Completed");
+                mProgress1Txt.setText(request.getDownloadContext() + " id: " + id + " Completed");
 
             } else if (id == downloadId2) {
-                mProgress2Txt.setText(request.getDownloadContext() + " id: "+id+" Completed");
+                mProgress2Txt.setText(request.getDownloadContext() + " id: " + id + " Completed");
 
             } else if (id == downloadId3) {
-                mProgress3Txt.setText(request.getDownloadContext() + " id: "+id+" Completed");
+                mProgress3Txt.setText(request.getDownloadContext() + " id: " + id + " Completed");
 
             } else if (id == downloadId4) {
-                mProgress4Txt.setText(request.getDownloadContext() + " id: "+id+" Completed");
+                mProgress4Txt.setText(request.getDownloadContext() + " id: " + id + " Completed");
             } else if (id == downloadId5) {
-              mProgress5Txt.setText(request.getDownloadContext() + " id: "+id+" Completed");
+                mProgress5Txt.setText(request.getDownloadContext() + " id: " + id + " Completed");
             }
         }
 
@@ -294,22 +297,22 @@ public class MainActivity extends AppCompatActivity {
         public void onDownloadFailed(DownloadRequest request, int errorCode, String errorMessage) {
             final int id = request.getDownloadId();
             if (id == downloadId1) {
-                mProgress1Txt.setText("Download1 id: "+id+" Failed: ErrorCode "+errorCode+", "+errorMessage);
+                mProgress1Txt.setText("Download1 id: " + id + " Failed: ErrorCode " + errorCode + ", " + errorMessage);
                 mProgress1.setProgress(0);
             } else if (id == downloadId2) {
-                mProgress2Txt.setText("Download2 id: "+id+" Failed: ErrorCode "+errorCode+", "+errorMessage);
+                mProgress2Txt.setText("Download2 id: " + id + " Failed: ErrorCode " + errorCode + ", " + errorMessage);
                 mProgress2.setProgress(0);
 
             } else if (id == downloadId3) {
-                mProgress3Txt.setText("Download3 id: "+id+" Failed: ErrorCode "+errorCode+", "+errorMessage);
+                mProgress3Txt.setText("Download3 id: " + id + " Failed: ErrorCode " + errorCode + ", " + errorMessage);
                 mProgress3.setProgress(0);
 
             } else if (id == downloadId4) {
-                mProgress4Txt.setText("Download4 id: "+id+" Failed: ErrorCode "+errorCode+", "+errorMessage);
+                mProgress4Txt.setText("Download4 id: " + id + " Failed: ErrorCode " + errorCode + ", " + errorMessage);
                 mProgress4.setProgress(0);
             } else if (id == downloadId5) {
-              mProgress5Txt.setText("Download5 id: "+id+" Failed: ErrorCode "+errorCode+", "+errorMessage);
-              mProgress5.setProgress(0);
+                mProgress5Txt.setText("Download5 id: " + id + " Failed: ErrorCode " + errorCode + ", " + errorMessage);
+                mProgress5.setProgress(0);
             }
         }
 
@@ -317,27 +320,27 @@ public class MainActivity extends AppCompatActivity {
         public void onProgress(DownloadRequest request, long totalBytes, long downloadedBytes, int progress) {
             int id = request.getDownloadId();
 
-            System.out.println("######## onProgress ###### "+id+" : "+totalBytes+" : "+downloadedBytes+" : "+progress);
+            System.out.println("######## onProgress ###### " + id + " : " + totalBytes + " : " + downloadedBytes + " : " + progress);
             if (id == downloadId1) {
-                mProgress1Txt.setText("Download1 id: "+id+", "+progress+"%"+"  "+getBytesDownloaded(progress,totalBytes));
+                mProgress1Txt.setText("Download1 id: " + id + ", " + progress + "%" + "  " + getBytesDownloaded(progress, totalBytes));
                 mProgress1.setProgress(progress);
 
             } else if (id == downloadId2) {
-                mProgress2Txt.setText("Download2 id: "+id+", "+progress+"%"+"  "+getBytesDownloaded(progress,totalBytes));
+                mProgress2Txt.setText("Download2 id: " + id + ", " + progress + "%" + "  " + getBytesDownloaded(progress, totalBytes));
                 mProgress2.setProgress(progress);
 
             } else if (id == downloadId3) {
-                mProgress3Txt.setText("Download3 id: "+id+", "+progress+"%"+"  "+getBytesDownloaded(progress,totalBytes));
+                mProgress3Txt.setText("Download3 id: " + id + ", " + progress + "%" + "  " + getBytesDownloaded(progress, totalBytes));
                 mProgress3.setProgress(progress);
 
             } else if (id == downloadId4) {
-                mProgress4Txt.setText("Download4 id: "+id+", "+progress+"%"+"  "+getBytesDownloaded(progress,totalBytes));
+                mProgress4Txt.setText("Download4 id: " + id + ", " + progress + "%" + "  " + getBytesDownloaded(progress, totalBytes));
                 mProgress4.setProgress(progress);
             } else if (id == downloadId5) {
-              mProgress5Txt.setText("Download5 id: "+id+", "+progress+"%"+"  "+getBytesDownloaded(progress,totalBytes));
-              mProgress5.setProgress(progress);
+                mProgress5Txt.setText("Download5 id: " + id + ", " + progress + "%" + "  " + getBytesDownloaded(progress, totalBytes));
+                mProgress5.setProgress(progress);
             } else if (id == downloadId6) {
-                mProgress5Txt.setText("Download6 id: "+id+", "+progress+"%"+"  "+getBytesDownloaded(progress,totalBytes));
+                mProgress5Txt.setText("Download6 id: " + id + ", " + progress + "%" + "  " + getBytesDownloaded(progress, totalBytes));
                 mProgress5.setProgress(progress);
             }
         }
@@ -345,14 +348,15 @@ public class MainActivity extends AppCompatActivity {
 
     private String getBytesDownloaded(int progress, long totalBytes) {
         //Greater than 1 MB
-        long bytesCompleted = (progress * totalBytes)/100;
+        long bytesCompleted = (progress * totalBytes) / 100;
         if (totalBytes >= 1000000) {
-            return (""+(String.format("%.1f", (float)bytesCompleted/1000000))+ "/"+ ( String.format("%.1f", (float)totalBytes/1000000)) + "MB");
-        } if (totalBytes >= 1000) {
-            return (""+(String.format("%.1f", (float)bytesCompleted/1000))+ "/"+ ( String.format("%.1f", (float)totalBytes/1000)) + "Kb");
+            return ("" + (String.format("%.1f", (float) bytesCompleted / 1000000)) + "/" + (String.format("%.1f", (float) totalBytes / 1000000)) + "MB");
+        }
+        if (totalBytes >= 1000) {
+            return ("" + (String.format("%.1f", (float) bytesCompleted / 1000)) + "/" + (String.format("%.1f", (float) totalBytes / 1000)) + "Kb");
 
         } else {
-            return ( ""+bytesCompleted+"/"+totalBytes );
+            return ("" + bytesCompleted + "/" + totalBytes);
         }
     }
 
